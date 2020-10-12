@@ -1,0 +1,10 @@
+node_modules/
+
+*.log
+
+
+.expo/
+
+.expo_shared/
+
+.env
