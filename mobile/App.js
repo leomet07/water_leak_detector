@@ -1,62 +1,101 @@
 
 import React, {Component} from "react";
+import { Text, View } from "react-native";
+import { Notifications } from "expo";
+import * as Permissions from "expo-permissions";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 
-import { StyleSheet, Text, View } from "react-native";
+import styles from "./Styles";
+import HomeScreen from "./Home"
+
+const Tab = createBottomTabNavigator();
+
 export default class App extends Component {
-   
-    constructor() {
-        super();
-        //save the scope so we can use this in a diff scope
-        
-        this.state = {
-            leaks : []
-        };
-    }
+    
+    
     componentWillUnmount() {
         
     }
     async componentDidMount() {
 
-		console.log("Mounted");
+	}
+	
+	registerForPushNotificationsAsync = async () => {
+        const { status } = await Permissions.askAsync(
+            Permissions.NOTIFICATIONS
+        );
+        // only asks if permissions have not already been determined, because
+        // iOS won't necessarily prompt the user a second time.
+        // On Android, permissions are granted on app installation, so
+        // `askAsync` will never prompt the user
 
-		let response = await fetch("https://waterleakbackend.herokuapp.com/api/db/get_leaks");
+        // Stop here if the user did not grant permissions
+        if (status !== "granted") {
+            alert("No notification permissions!");
+            return;
+        } else {
+            console.log("Notifications are allowed");
+        }
 
-		const json = await response.json();
+        // Get the token that identifies this device
+        token = await Notifications.getExpoPushTokenAsync();
+        console.log("My token: " + token);
 
-		console.log(JSON.stringify(json))
+        if (Platform.OS === "android") {
+            console.log("andriod");
+            Notifications.createChannelAndroidAsync("chat-messages", {
+                name: "Chat messages",
+                sound: true,
+                priority: "high"
+            });
+        } else {
+            console.log("ios");
+        }
+
         
-        this.setState({leaks : json});
-        //this.registerForPushNotifications()
-    }
+    };
 
     
-
     render() {
-		const leakItems = this.state.leaks.map((data) => {
-
-			let uri = data._id;
-			console.log(uri)
-			return (
-				<Text key={uri}>
-					{data.date}
-				</Text>
-			);
-		});
-
+        let state = this.state;
+        
 
         return (
-            <View style={styles.container}>
-               <Text>Hello</Text>
-			   <View>{leakItems}</View>
-            </View>
+				<NavigationContainer>
+					<Tab.Navigator screenOptions={({ route }) => ({
+                        tabBarIcon: ({ focused, color, size }) => {
+                            let iconName;
+
+                            if (route.name === "Home") {
+                                iconName = focused
+                                    ? "ios-information-circle"
+                                    : "ios-information-circle-outline";
+                            } 
+
+                            // You can return any component that you like here!
+                            return (
+                                <Ionicons
+                                    name={iconName}
+                                    size={size}
+                                    color={color}
+                                />
+                            );
+                        }
+                    })}
+                    tabBarOptions={{
+                        activeTintColor: "tomato",
+                        inactiveTintColor: "gray"
+                    }}>
+							
+						<Tab.Screen name="Home" component={HomeScreen} />
+					
+					</Tab.Navigator>
+				</NavigationContainer>
+            
         );
     }
 }
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-});
+
+
