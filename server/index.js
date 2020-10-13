@@ -1,11 +1,18 @@
 const express = require("express");
-const app = express();
 const cors = require('cors')
-app.use(cors())
+const helmet = require("helmet");
 const mongoose = require("mongoose");
+const morgan = require("morgan");
 const dotenv = require("dotenv").config();
 
+
+const app = express();
+
+// Middleware
+app.use(cors())
 app.use(express.json());
+app.use(helmet());
+app.use(morgan("tiny"))
 
 // Only redirect to SSL if developer allows and states that machine running this has SSL to prevent crashes on computers without SSL
 if (process.env.SSL == "true") {
@@ -18,14 +25,10 @@ if (process.env.SSL == "true") {
 		res.redirect("https://" + req.headers.host + req.url);
 	});
 }
-// Serve static files
-// app.use(express.static("public"));
 
 // import Routes
 const apiRouter = require("./routes/api").router;
-// const cardRouter = require("./routes/cards").router;
 
-// Connect to db
 
 const db_str = process.env.DB_CONNECT;
 console.log(db_str);
@@ -41,12 +44,10 @@ mongoose.connect(
 	}
 );
 
-// Middleware
 
 //Routes Middleware
 app.use("/api/", apiRouter);
-// app.use("/api/cards", cardRouter);
-app.use("/" , function( req, res) {
+app.get("/" , function( req, res) {
 	res.send("Hello World to Water Leak detector")
 })
 
