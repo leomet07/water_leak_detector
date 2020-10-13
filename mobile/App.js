@@ -6,9 +6,15 @@ import * as Permissions from "expo-permissions";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
 import styles from "./Styles";
 import HomeScreen from "./Home"
+
+if (__DEV__) {
+    console.log('Development');
+} else {
+    console.log('Production');
+}
+
 
 const Tab = createBottomTabNavigator();
 
@@ -26,10 +32,7 @@ export default class App extends Component {
         const { status } = await Permissions.askAsync(
             Permissions.NOTIFICATIONS
         );
-        // only asks if permissions have not already been determined, because
-        // iOS won't necessarily prompt the user a second time.
-        // On Android, permissions are granted on app installation, so
-        // `askAsync` will never prompt the user
+
 
         // Stop here if the user did not grant permissions
         if (status !== "granted") {
@@ -44,23 +47,20 @@ export default class App extends Component {
         console.log("My token: " + token);
 
         if (Platform.OS === "android") {
-            console.log("andriod");
+            console.log("Android");
             Notifications.createChannelAndroidAsync("chat-messages", {
                 name: "Chat messages",
                 sound: true,
                 priority: "high"
             });
         } else {
-            console.log("ios");
+            console.log("IOS");
         }
 
-        
     };
 
-    
     render() {
         let state = this.state;
-        
 
         return (
 				<NavigationContainer>
