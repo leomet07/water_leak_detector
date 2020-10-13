@@ -22,7 +22,7 @@ if (process.env.SSL == "true") {
 // app.use(express.static("public"));
 
 // import Routes
-const dbRouter = require("./routes/db").router;
+const apiRouter = require("./routes/api").router;
 // const cardRouter = require("./routes/cards").router;
 
 // Connect to db
@@ -44,7 +44,7 @@ mongoose.connect(
 // Middleware
 
 //Routes Middleware
-app.use("/api/db", dbRouter);
+app.use("/api/", apiRouter);
 // app.use("/api/cards", cardRouter);
 app.use("/" , function( req, res) {
 	res.send("Hello World to Water Leak detector")

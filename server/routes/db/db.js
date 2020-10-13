@@ -1,6 +1,6 @@
 const router = require("express").Router();
 
-const Leak = require("../model/Leak");
+const Leak = require("../../model/Leak");
 
 
 // Get all the cards, or search by params in request body.
