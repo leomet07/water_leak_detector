@@ -10,6 +10,17 @@ export default styles = StyleSheet.create({
 	},
 	title : {
 		fontSize: 25
+	},
+	text_input : { 
+		height: 40,
+		borderColor: 'black',
+		borderWidth: 3, 
+		fontSize: 18,
+		padding : 5,
+		marginTop : 5,
+		paddingLeft : 9,
+		width : "92%",
+		marginBottom : 10
 	}
 	
 });

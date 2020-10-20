@@ -2,11 +2,14 @@
 import React, {Component} from "react";
 import { Text, View } from "react-native";
 import styles from "./Styles";
+import globals from "./Globals"
 export default class HomeScreen extends Component {
-	constructor() {
-        super();
+	constructor(props) {
+		super(props);
+		// console.log("props", props.route.params.globals)
         this.state = {
-			leaks : []
+			leaks : [],
+			globals : props.route.params.globals
         };
 	}
 
@@ -14,7 +17,8 @@ export default class HomeScreen extends Component {
 
 		console.log("Mounted");
 
-		let response = await fetch("https://waterleakbackend.herokuapp.com/api/db/get_leaks");
+		let uri = this.state.globals.BASE_URL + "/api/db/get_leaks"
+		let response = await fetch(uri);
 
 		const json = await response.json();
 

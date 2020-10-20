@@ -8,6 +8,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./Styles";
 import HomeScreen from "./Home"
+import LoginScreen from "./Login"
+import * as Device from 'expo-device';
+var ee = require('event-emitter');
 
 if (__DEV__) {
     console.log('Development');
@@ -19,13 +22,23 @@ if (__DEV__) {
 const Tab = createBottomTabNavigator();
 
 export default class App extends Component {
-    
+	constructor() {
+		super();
+		const emitter = ee();
+		this.state = {
+			globals : {
+				BASE_URL : "https://waterleakbackend.herokuapp.com",
+				emitter : emitter
+			},
+			logged_in : false
+		}
+
+	}
+
+	
     
     componentWillUnmount() {
         
-    }
-    async componentDidMount() {
-
 	}
 	
 	registerForPushNotificationsAsync = async () => {
@@ -43,7 +56,7 @@ export default class App extends Component {
         }
 
         // Get the token that identifies this device
-        token = await Notifications.getExpoPushTokenAsync();
+        const token = await Notifications.getExpoPushTokenAsync();
         console.log("My token: " + token);
 
         if (Platform.OS === "android") {
@@ -59,9 +72,24 @@ export default class App extends Component {
 
     };
 
+
+
+    async componentDidMount() {
+		if (Device.isDevice){
+			console.log("Real Device")
+			this.registerForPushNotificationsAsync()
+		}
+		this.state.globals.emitter.on('logged_in', listener =  (args) => {
+			// … react to 'test' event
+			console.log("Logged In!")
+			this.setState({logged_in : true})
+		});
+	}
+	
+	
     render() {
         let state = this.state;
-
+		console.log("Logged in status: " , this.state.logged_in)
         return (
 				<NavigationContainer>
 					<Tab.Navigator screenOptions={({ route }) => ({
@@ -72,7 +100,9 @@ export default class App extends Component {
                                 iconName = focused
                                     ? "ios-information-circle"
                                     : "ios-information-circle-outline";
-                            } 
+                            }  else if (route.name === "Login") {
+								iconName = focused ? "md-person" : "md-person";
+							}
 
                             // You can return any component that you like here!
                             return (
@@ -89,7 +119,8 @@ export default class App extends Component {
                         inactiveTintColor: "gray"
                     }}>
 							
-						<Tab.Screen name="Home" component={HomeScreen} />
+						<Tab.Screen name="Home" initialParams={{ globals: this.state.globals }} component={HomeScreen} />
+						{ this.state.logged_in ? <React.Fragment></React.Fragment> :  <Tab.Screen name="Login" initialParams={{ globals: this.state.globals }} component={LoginScreen} />}
 					
 					</Tab.Navigator>
 				</NavigationContainer>
