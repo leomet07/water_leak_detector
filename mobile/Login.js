@@ -40,7 +40,7 @@ export default class LoginScreen extends Component {
 		console.log(json)
 		if (json.logged_in) {
 			console.log("Emmiting")
-			this.state.globals.emitter.emit('logged_in');
+			this.state.globals.emitter.emit('logged_in', json);
 		}
 		
 	}
@@ -61,7 +61,7 @@ export default class LoginScreen extends Component {
 				<Button
 				onPress={this.login}
 				title="Login"
-				accessibilityLabel="Learn more about this purple button"
+				accessibilityLabel="Login"
 				/>
             </View>
         );

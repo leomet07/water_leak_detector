@@ -22,7 +22,7 @@ export default class HomeScreen extends Component {
 
 		const json = await response.json();
 
-		console.log(JSON.stringify(json))
+		// console.log(JSON.stringify(json))
         
         this.setState({leaks : json});
         
@@ -32,7 +32,7 @@ export default class HomeScreen extends Component {
 		const leakItems = this.state.leaks.map((data) => {
 
 			let uri = data._id;
-			console.log(uri)
+			// console.log(uri)
 			return (
 				<Text key={uri}>
 					{data.date}
