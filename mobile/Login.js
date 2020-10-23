@@ -1,6 +1,6 @@
 
 import React, {Component} from "react";
-import { Text, View, TextInput, Button } from "react-native";
+import { Text, View, TextInput, Button , TouchableOpacity} from "react-native";
 import styles from "./Styles";
 export default class LoginScreen extends Component {
 	constructor(props) {
@@ -46,6 +46,7 @@ export default class LoginScreen extends Component {
 	}
 
     render() {
+		console.log(styles.button)
         return (
             <View style={styles.container}>
                <Text style={styles.title}>Login</Text>
@@ -58,11 +59,12 @@ export default class LoginScreen extends Component {
 
 
 				
-				<Button
-				onPress={this.login}
-				title="Login"
-				accessibilityLabel="Login"
-				/>
+				
+				<TouchableOpacity
+					style={styles.button}
+					onPress={this.login} >
+					<Text style={styles.button_text}>Login</Text>
+				</TouchableOpacity>	
             </View>
         );
     }

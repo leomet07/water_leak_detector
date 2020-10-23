@@ -1,6 +1,6 @@
 
 import React, {Component} from "react";
-import { Text, View, TextInput, Button } from "react-native";
+import { Text, View, TextInput, Button , TouchableOpacity} from "react-native";
 import styles from "./Styles";
 export default class SettingsScreen extends Component {
 	constructor(props) {
@@ -29,11 +29,17 @@ export default class SettingsScreen extends Component {
         return (
             <View style={styles.container}>
                <Text style={styles.title}>Settings</Text>
-			   <Button
+			   {/* <Button
 				onPress={this.logout}
+				style={styles.button}
 				title="Logout"
 				accessibilityLabel="Learn more about this purple button"
-				/>
+				/> */}
+				<TouchableOpacity
+					style={styles.button}
+					onPress={this.logout} >
+					<Text style={styles.button_text}>Logout</Text>
+				</TouchableOpacity>	
             </View>
         );
     }
