@@ -1,8 +1,8 @@
 const router = require("express").Router();
-
+const verifyToken  = require("../auth/verifyToken");
 const Leak = require("../../model/Leak");
 
-
+router.use(verifyToken)
 // Get all the cards, or search by params in request body.
 router.get("/get_leaks", async (req, res) => {
 	try {
