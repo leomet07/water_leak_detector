@@ -109,16 +109,19 @@ export default class App extends Component {
 			console.log("Auth server token: " , json.token)
 		
 			
-			this.setState({logged_in : true, token : json.token})
-			this.state.globals.emitter.emit("checked_token", json.token)
+			
+			
 
 			try {
 				await AsyncStorage.setItem('@authentication_save:auth_token', json.token);
+				await AsyncStorage.setItem('@authentication_save:verified_auth_token', json.token);
 				
 			} catch (error) {
 				// Error saving data
 				console.log('Error saving data')
 			}
+			this.setState({logged_in : true, token : json.token})
+			this.state.globals.emitter.emit("checked_token", json.token)
 
 		});
 		this.state.globals.emitter.on('logged_out', listener =  async (json) => {
@@ -127,11 +130,13 @@ export default class App extends Component {
 
 			try {
 				await AsyncStorage.removeItem('@authentication_save:auth_token');
+				await AsyncStorage.removeItem('@authentication_save:verified_auth_token');
 				console.log("removed")
 			} catch (error) {
 				// Error saving data
 				console.log('Error deleting data')
 			}
+			this.state.globals.emitter.emit('logged_out_finished')
 			this.setState({logged_in : false, token : null})
 			
 		});

@@ -23,13 +23,17 @@ export default class HomeScreen extends Component {
 		this.makeApiRequest(await functions.get_token())
 		this.state.globals.emitter.on('checked_token', listener =  async (token) => {
 			console.log("Checked Token Recieved")
-			
-			await this.makeApiRequest(await functions.get_token())
+			const get_token = await functions.get_token();
+			console.log("get_token Recieved: ", get_token)
+			await this.makeApiRequest(get_token)
 		});
 
-		this.state.globals.emitter.on("logged_out",  listener =  async () => {
+		this.state.globals.emitter.on("logged_out_finished",  listener =  async () => {
 			console.log("no token here")
-			await this.makeApiRequest(await functions.get_token())
+
+			const token_get = await functions.get_token()
+			console.log("token_get:" , token_get)
+			await this.makeApiRequest(token_get)
 		})
 
         
@@ -38,7 +42,7 @@ export default class HomeScreen extends Component {
 
 	makeApiRequest = async (token) => {
 
-		console.log("auth token ", token )
+		
 
 		let leaks = [];
 		if (token){
