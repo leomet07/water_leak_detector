@@ -46,7 +46,6 @@ export default class LoginScreen extends Component {
 	}
 
     render() {
-		console.log(styles.button)
         return (
             <View style={styles.container}>
                <Text style={styles.title}>Login</Text>

@@ -38,7 +38,6 @@ export default class App extends Component {
 
 	}
 
-	
     
     componentWillUnmount() {
         
@@ -76,7 +75,6 @@ export default class App extends Component {
     };
 
 
-
     async componentDidMount() {
 		if (Device.isDevice){
 			console.log("Real Device")
@@ -86,9 +84,20 @@ export default class App extends Component {
 		try {
 			const value = await AsyncStorage.getItem('@authentication_save:auth_token');
 			if (value !== null) {
-			  // We have data!!
-			  console.log("Read from Data" , value);
-			  this.setState({logged_in : true, token: value})
+				// We have data!!
+				console.log("Read from Data" , value);
+				
+				try {
+					await AsyncStorage.setItem('@authentication_save:verified_auth_token', value);
+					
+				} catch (error) {
+					// Error saving data
+					console.log('Error saving data')
+				}
+
+				this.setState({logged_in : true, token : value})
+				this.state.globals.emitter.emit("checked_token", value)
+				
 			}
 		  } catch (error) {
 			console.log("error reading data", error)
@@ -98,29 +107,23 @@ export default class App extends Component {
 			// … react to 'test' event
 			console.log("Logged In!", json)
 			console.log("Auth server token: " , json.token)
+		
+			
 			this.setState({logged_in : true, token : json.token})
+			this.state.globals.emitter.emit("checked_token", json.token)
 
 			try {
 				await AsyncStorage.setItem('@authentication_save:auth_token', json.token);
-				console.log("written")
+				
 			} catch (error) {
 				// Error saving data
 				console.log('Error saving data')
 			}
 
-			//   try {
-			// 	const value = await AsyncStorage.getItem('@authentication_save:auth_token');
-			// 	if (value !== null) {
-			// 	  // We have data!!
-			// 	  console.log("Read from Data" , value);
-			// 	}
-			//   } catch (error) {
-			// 	console.log("error reading data", error)
-			//   }
 		});
 		this.state.globals.emitter.on('logged_out', listener =  async (json) => {
 			console.log("Logging Out recieved")
-			this.setState({logged_in : false, token : null})
+			
 
 			try {
 				await AsyncStorage.removeItem('@authentication_save:auth_token');
@@ -129,12 +132,17 @@ export default class App extends Component {
 				// Error saving data
 				console.log('Error deleting data')
 			}
+			this.setState({logged_in : false, token : null})
+			
 		});
 	}
 	
     render() {
         let state = this.state;
 		// console.log("Logged in status: " , this.state.logged_in)
+		// console.log("app rerendered", this.state)
+		const submitGlobals = { globals: { emitter : this.state.globals.emitter, BASE_URL: this.state.globals.BASE_URL, token : this.state.token} };
+		// console.log('Submit Globals', submitGlobals.globals)
         return (
 				<NavigationContainer>
 					<Tab.Navigator screenOptions={({ route }) => ({
@@ -171,7 +179,7 @@ export default class App extends Component {
 						<Tab.Screen name="Home" initialParams={{ globals: this.state.globals }} component={HomeScreen} />
 						{ this.state.logged_in ? <React.Fragment>
 						<Tab.Screen name="Settings" initialParams={{ globals: this.state.globals }} component={SettingsScreen} />
-						</React.Fragment> :  <Tab.Screen name="Login" initialParams={{ globals: this.state.globals }} component={LoginScreen} />}
+						</React.Fragment> :  <Tab.Screen name="Login" initialParams={submitGlobals} component={LoginScreen} />}
 					
 					</Tab.Navigator>
 				</NavigationContainer>
