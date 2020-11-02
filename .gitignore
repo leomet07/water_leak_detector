@@ -8,3 +8,5 @@ node_modules/
 .expo_shared/
 
 .env
+
+__pycache__/
