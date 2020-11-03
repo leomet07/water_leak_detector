@@ -4,6 +4,7 @@ import { Text, View } from "react-native";
 import styles from "./Styles";
 import functions from "./Functions";
 
+
 export default class HomeScreen extends Component {
 	constructor(props) {
 		super(props);
@@ -28,15 +29,15 @@ export default class HomeScreen extends Component {
 			await this.makeApiRequest(get_token)
 		});
 
-		this.state.globals.emitter.on("logged_out_finished",  listener =  async () => {
-			console.log("no token here")
 
-			const token_get = await functions.get_token()
-			console.log("token_get:" , token_get)
-			await this.makeApiRequest(token_get)
-		})
+		this.state.globals.emitter.on("logged_out_finished",  listener =  this.logged_out_callback)
 
         
+	}
+
+	async componentWillUnmount(){
+		
+		this.state.globals.emitter.off('logged_out_finished', listener);      
 	}
 
 
@@ -58,12 +59,20 @@ export default class HomeScreen extends Component {
 	
 			leaks = await response.json();
 			// console.log(leaks)
+
+			this.setState({leaks : leaks});
 			
 			
 			
 		}
-		this.setState({leaks : leaks});
 
+	}
+	logged_out_callback = async () => {
+		console.log("no token here")
+	
+		const token_get = await functions.get_token()
+		console.log("token_get:" , token_get)
+		await this.makeApiRequest(token_get)
 	}
 
     render() {

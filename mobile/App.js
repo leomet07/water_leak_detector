@@ -181,9 +181,11 @@ export default class App extends Component {
                         inactiveTintColor: "gray"
                     }}>
 							
-						<Tab.Screen name="Home" initialParams={{ globals: this.state.globals }} component={HomeScreen} />
+						
 						{ this.state.logged_in ? <React.Fragment>
+							<Tab.Screen name="Home" initialParams={{ globals: this.state.globals }} component={HomeScreen} />
 						<Tab.Screen name="Settings" initialParams={{ globals: this.state.globals }} component={SettingsScreen} />
+						
 						</React.Fragment> :  <Tab.Screen name="Login" initialParams={submitGlobals} component={LoginScreen} />}
 					
 					</Tab.Navigator>
