@@ -12,6 +12,7 @@ import LoginScreen from "./Login";
 import SettingsScreen from "./Settings";
 import * as Device from "expo-device";
 import { AsyncStorage } from "react-native";
+import { not } from "react-native-reanimated";
 
 var ee = require("event-emitter");
 
@@ -22,6 +23,14 @@ if (__DEV__) {
 }
 
 const Tab = createBottomTabNavigator();
+
+Notifications.setNotificationHandler({
+	handleNotification: async () => ({
+		shouldShowAlert: true,
+		shouldPlaySound: false,
+		shouldSetBadge: false,
+	}),
+});
 
 export default class App extends Component {
 	constructor() {
@@ -96,16 +105,25 @@ export default class App extends Component {
 		}
 	};
 
-	_handleNotificationInApp = async () => {
-		console.log("Handle Notification in App.");
+	_handleNotification = (notification) => {
+		console.log("Notif Recieved in Foreground.", notification);
+	};
+
+	_handleNotificationResponse = (response) => {
+		console.log(response);
 	};
 	async componentDidMount() {
 		if (Device.isDevice) {
 			console.log("Real Device");
 			this.registerForPushNotificationsAsync();
-			// Notifications.addListener = this._handleNotificationInApp;
 
-			// Notifications.addNotificationResponseReceivedListener = this._handleNotificationResponse;
+			Notifications.addNotificationReceivedListener(
+				this._handleNotification
+			);
+
+			Notifications.addNotificationResponseReceivedListener(
+				this._handleNotificationResponse
+			);
 		}
 		// Check if auth-token is saved in AsyncStorage
 		try {
