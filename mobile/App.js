@@ -14,6 +14,13 @@ import * as Device from "expo-device";
 import { AsyncStorage } from "react-native";
 import { not } from "react-native-reanimated";
 
+var socket = require("socket.io-client")(
+	"https://waterleakbackend.herokuapp.com"
+);
+socket.on("connect", function () {
+	console.log("Socket connected");
+});
+
 var ee = require("event-emitter");
 
 if (__DEV__) {
@@ -48,34 +55,6 @@ export default class App extends Component {
 
 	componentWillUnmount() {}
 
-	// registerForPushNotificationsAsync = async () => {
-	// 	const { status } = await Permissions.askAsync(
-	// 		Permissions.NOTIFICATIONS
-	// 	);
-
-	// 	// Stop here if the user did not grant permissions
-	// 	if (status !== "granted") {
-	// 		alert("No notification permissions!");
-	// 		return;
-	// 	} else {
-	// 		console.log("Notifications are allowed");
-	// 	}
-
-	// 	// Get the token that identifies this device
-	// 	const token = await Notifications.getExpoPushTokenAsync();
-	// 	console.log("My token: " + token);
-
-	// 	if (Platform.OS === "android") {
-	// 		console.log("Android");
-	// 		Notifications.createChannelAndroidAsync("chat-messages", {
-	// 			name: "Chat messages",
-	// 			sound: true,
-	// 			priority: "high",
-	// 		});
-	// 	} else {
-	// 		console.log("IOS");
-	// 	}
-	// };
 	registerForPushNotificationsAsync = async () => {
 		const { status: existingStatus } = await Permissions.getAsync(
 			Permissions.NOTIFICATIONS
@@ -196,6 +175,10 @@ export default class App extends Component {
 				this.setState({ logged_in: false, token: null });
 			})
 		);
+
+		socket.on("leak_added", function (data) {
+			console.log("leaks added from server", data);
+		});
 	}
 
 	render() {
