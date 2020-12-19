@@ -9,7 +9,8 @@ module.exports = function (req, res, next) {
 
 	try {
 		console.log("verify token middleware says token: ", token);
-		console.log(typeof token);
+		console.log("type of token: ", typeof token);
+		console.log("jwt secret: ", process.env.ACCESS_TOKEN_SECRET);
 		const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 		req.user = verified;
 
