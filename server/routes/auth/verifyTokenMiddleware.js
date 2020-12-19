@@ -17,6 +17,8 @@ module.exports = function (req, res, next) {
 		next();
 	} catch (err) {
 		console.log("verify token middleware says error! ", err);
-		res.status(400).end({ message: "Invalid token -> Acess denied" });
+		return res
+			.status(401)
+			.end({ message: "Invalid token -> Acess denied" });
 	}
 };
