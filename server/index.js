@@ -4,7 +4,7 @@ const helmet = require("helmet");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const dotenv = require("dotenv").config();
-
+const handlers = require("./routes/io/handlers");
 const app = express();
 
 var http = require("http").createServer(app);
@@ -14,6 +14,7 @@ const io = require("socket.io")(http, {
 		origin: "*",
 	},
 });
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -67,5 +68,7 @@ http.listen(process.env.PORT || 3000, function () {
 });
 
 io.on("connection", (client) => {
-	console.log("client connected");
+	handlers.handleuser(client, io);
 });
+
+module.exports.io = io;

@@ -2,6 +2,7 @@ const router = require("express").Router();
 const verifyToken = require("../auth/verifyTokenMiddleware");
 const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const Leak = require("../../model/Leak");
+// const io = ;
 
 router.use(verifyToken);
 
@@ -28,7 +29,11 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 
 	savedLeak = await leak.save();
 
-	return res.json({ created: true, leak: savedLeak });
+	res.json({ created: true, leak: savedLeak });
+
+	const io = require("../../index").io;
+
+	io.sockets.emit("leak_added", savedLeak);
 });
 
 module.exports.router = router;
