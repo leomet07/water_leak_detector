@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View } from "react-native";
+import { Text, View, ScrollView } from "react-native";
 import styles from "./Styles";
 import functions from "./Functions";
 
@@ -33,6 +33,11 @@ export default class HomeScreen extends Component {
 			"logged_out_finished",
 			(listener = this.logged_out_callback)
 		);
+
+		this.state.globals.emitter.on(
+			"new_leak",
+			(listener = this.new_leak_callback)
+		);
 	}
 
 	async componentWillUnmount() {
@@ -64,6 +69,14 @@ export default class HomeScreen extends Component {
 		console.log("token_get:", token_get);
 		await this.makeApiRequest(token_get);
 	};
+	new_leak_callback = async (data) => {
+		console.log("data from in home: ", data);
+		const leaks = this.state.leaks;
+		console.log(leaks.length);
+		leaks.push(data);
+		console.log(leaks.length);
+		this.setState({ leaks: leaks });
+	};
 
 	render() {
 		const leakItems = this.state.leaks.map((data) => {
@@ -82,7 +95,7 @@ export default class HomeScreen extends Component {
 			<View style={styles.container}>
 				<Text style={styles.title}>Water Leak Detector</Text>
 				{this.state.leaks.length > 0 ? (
-					<View>{leakItems}</View>
+					<ScrollView>{leakItems}</ScrollView>
 				) : (
 					<React.Fragment>{loader}</React.Fragment>
 				)}

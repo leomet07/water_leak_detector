@@ -176,8 +176,13 @@ export default class App extends Component {
 			})
 		);
 
-		socket.on("leak_added", function (data) {
+		socket.on("leak_added", (data) => {
 			console.log("leaks added from server", data);
+			try {
+				this.state.globals.emitter.emit("new_leak", data);
+			} catch (err) {
+				console.log("error in leak listener: ", err);
+			}
 		});
 	}
 
