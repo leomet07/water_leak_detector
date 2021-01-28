@@ -5,12 +5,27 @@ from time import sleep
 import os
 import sys
 
+if not os.path.exists(".env"):
+    print(".env does not exist. Ports could not be loaded.")
+    exit()
+
 from dotenv import load_dotenv
 
 load_dotenv()
+ports = {}
 
 
-ports = {"win32": os.environ["win32port"], "linux": os.environ["linuxport"]}
+win32port = os.environ["win32port"] # possibly do some manipulating/veirfying
+if win32port:
+    ports["win32"] = win32port
+
+    
+
+linuxport = os.environ["linuxport"] # possibly do some manipulating/veirfying
+if win32port:
+    ports["linux"] = linuxport
+
+    
 platform = sys.platform
 
 
