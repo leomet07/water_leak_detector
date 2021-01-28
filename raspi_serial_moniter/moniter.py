@@ -5,8 +5,12 @@ from time import sleep
 import os
 import sys
 
-# ports = {"win32": "COM3", "linux": "/dev/ttyACM0"}
-ports = {"win32": "COM4", "linux": "/dev/ttyUSB0"}
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+ports = {"win32": os.environ["win32port"], "linux": os.environ["linuxport"]}
 platform = sys.platform
 
 
@@ -24,4 +28,11 @@ while True:
 
     if data_raw:
         print("Data is: " + data_raw)
+        try:
+            num = int(data_raw)
+            if num > 70:
+                print("Water leak detected.")
+        except:
+            print("Num could not be converted.")
+
 
