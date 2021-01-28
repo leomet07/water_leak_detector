@@ -13,7 +13,7 @@ module.exports = async function (req, res, next) {
 		const uid = req.user._id;
 
 		const userisAdmin = await checkIsAdmin(uid);
-
+		console.log("user is admin", userisAdmin);
 		if (userisAdmin) {
 			next();
 		} else {

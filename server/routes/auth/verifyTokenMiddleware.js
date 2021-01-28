@@ -4,7 +4,7 @@ module.exports = function (req, res, next) {
 	const token = req.header("auth-token");
 	if (!token) {
 		console.log("verify token middleware says access denied");
-		return res.status(401).end({ message: "Acess Denied!" });
+		return res.status(401).send({ message: "Token not included." });
 	}
 
 	try {
@@ -13,12 +13,11 @@ module.exports = function (req, res, next) {
 		// console.log("jwt secret: ", process.env.ACCESS_TOKEN_SECRET);
 		const verified = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 		req.user = verified;
-
 		next();
 	} catch (err) {
 		console.log("verify token middleware says error! ", err);
 		return res
 			.status(401)
-			.end({ message: "Invalid token -> Acess denied" });
+			.send({ message: "Invalid token -> Acess denied" });
 	}
 };
