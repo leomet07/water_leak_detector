@@ -36,4 +36,13 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 	io.sockets.emit("leak_added", savedLeak);
 });
 
+setInterval(async function () {
+	const io = require("../../index").io;
+
+	let leaks = await Leak.find({});
+
+	io.sockets.emit("db_check", leaks);
+	// TODO: loop through all connected verified users and just dump all the leaks that happened under their account.
+}, 2000);
+
 module.exports.router = router;

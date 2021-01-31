@@ -6,6 +6,7 @@ function handleuser(user, io) {
 		console.log("user disconnected");
 	});
 }
+console.log("Ran main handlers file.");
 
 module.exports = {
 	handleuser: handleuser,
