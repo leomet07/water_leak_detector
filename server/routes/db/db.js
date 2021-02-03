@@ -9,7 +9,9 @@ router.use(verifyToken);
 // Get all the cards, or search by params in request body.
 router.get("/get_leaks", async (req, res) => {
 	try {
-		let leaks = await Leak.find({});
+		console.log("req.user in get_leaks", req.user);
+
+		let leaks = await Leak.find({ uid: req.user._id });
 
 		res.json(leaks);
 	} catch (err) {
@@ -21,10 +23,14 @@ router.get("/get_leaks", async (req, res) => {
 });
 // Get all the cards, or search by params in request body.
 router.post("/create", isAdminMiddleware, async (req, res) => {
+	console.log("req.user", req.user);
 	console.log("Body", req.body);
+
+	const uid = req.user._id;
 
 	const leak = new Leak({
 		date: Date.now().toString(),
+		uid: uid,
 	});
 
 	savedLeak = await leak.save();
