@@ -38,16 +38,29 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 	res.json({ created: true, leak: savedLeak });
 
 	const io = require("../../index").io;
+	[...io.sockets.sockets.values()].some(async (element) => {
+		// console.log("element decoded inside of some", element.decoded);
+		let value = element.decoded._id == uid;
 
-	io.sockets.emit("leak_added", savedLeak);
+		if (value) {
+			element.emit("leak_added", savedLeak);
+		}
+		return value;
+	});
+	// io.sockets.emit("leak_added", savedLeak);
 });
 
 setInterval(async function () {
 	const io = require("../../index").io;
 
-	let leaks = await Leak.find({});
+	// io.sockets.emit("db_check", leaks);
 
-	io.sockets.emit("db_check", leaks);
+	// console.log(io.sockets.sockets.size);
+	io.sockets.sockets.forEach(async (element) => {
+		// console.log(element.decoded);
+		let leaks = await Leak.find({ uid: element.decoded._id });
+		element.emit("db_check", leaks);
+	});
 	// TODO: loop through all connected verified users and just dump all the leaks that happened under their account.
 }, 2000);
 

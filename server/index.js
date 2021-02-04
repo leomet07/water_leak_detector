@@ -6,6 +6,7 @@ const morgan = require("morgan");
 const dotenv = require("dotenv").config();
 const handlers = require("./routes/io/handlers");
 const app = express();
+const jwt = require("jsonwebtoken");
 
 var http = require("http").createServer(app);
 
@@ -67,7 +68,27 @@ http.listen(process.env.PORT || 3000, function () {
 	console.log("App listening at http://%s:%s", host, port);
 });
 
+io.use(function (socket, next) {
+	if (socket.handshake.query && socket.handshake.query.token) {
+		jwt.verify(
+			socket.handshake.query.token,
+			process.env.ACCESS_TOKEN_SECRET,
+			function (err, decoded) {
+				if (err) {
+					console.log("Socket not provided an auth token. ");
+					return next(new Error("Authentication error"));
+				}
+				socket.decoded = decoded;
+				next();
+			}
+		);
+	} else {
+		next(new Error("Authentication error"));
+	}
+});
+
 io.on("connection", (client) => {
+	// console.log("socket connection", client.decoded);
 	handlers.handleuser(client, io);
 });
 
