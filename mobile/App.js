@@ -14,9 +14,9 @@ import * as Device from "expo-device";
 import { AsyncStorage } from "react-native";
 import { not } from "react-native-reanimated";
 
-var socket = require("socket.io-client")(
-	"https://waterleakbackend.herokuapp.com"
-);
+const connection_client = require("socket.io-client");
+
+var socket = connection_client("https://waterleakbackend.herokuapp.com/");
 socket.on("connect", function () {
 	console.log("Socket connected");
 });
@@ -92,6 +92,21 @@ export default class App extends Component {
 		console.log(response);
 	};
 	async componentDidMount() {
+		this.state.globals.emitter.on(
+			"checked_token",
+			(listener = async (data) => {
+				if (data.logged_in) {
+					console.log("after checked token, user IS  logged in");
+				} else {
+					console.log("after checked token, user NOT logged in");
+
+					if (socket) {
+						socket.disconnect();
+					}
+				}
+			})
+		);
+
 		if (Device.isDevice) {
 			console.log("Real Device");
 			this.registerForPushNotificationsAsync();
@@ -113,6 +128,8 @@ export default class App extends Component {
 				// We have data!!
 				console.log("Read from Data", value);
 
+				// verify token here
+
 				try {
 					await AsyncStorage.setItem(
 						"@authentication_save:verified_auth_token",
@@ -124,7 +141,16 @@ export default class App extends Component {
 				}
 
 				this.setState({ logged_in: true, token: value });
-				this.state.globals.emitter.emit("checked_token", value);
+				console.log("About to emit checked_token ");
+				this.state.globals.emitter.emit("checked_token", {
+					token: value,
+					logged_in: this.state.logged_in,
+				});
+			} else {
+				this.state.globals.emitter.emit("checked_token", {
+					token: null,
+					logged_in: false,
+				});
 			}
 		} catch (error) {
 			console.log("error reading data", error);
@@ -151,13 +177,21 @@ export default class App extends Component {
 					console.log("Error saving data");
 				}
 				this.setState({ logged_in: true, token: json.token });
-				this.state.globals.emitter.emit("checked_token", json.token);
+
+				this.state.globals.emitter.emit("checked_token", {
+					logged_in: this.state.logged_in,
+					token: json.token,
+				});
 			})
 		);
 		this.state.globals.emitter.on(
 			"logged_out",
 			(listener = async (json) => {
 				console.log("Logging Out recieved");
+
+				if (socket) {
+					socket.disconnect();
+				}
 
 				try {
 					await AsyncStorage.removeItem(

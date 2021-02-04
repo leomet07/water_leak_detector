@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export default styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingTop: 150,
+		paddingTop: "15%",
 
 		backgroundColor: "#fff",
 		alignItems: "center",
@@ -38,5 +38,8 @@ export default styles = StyleSheet.create({
 	button_text: {
 		color: "white",
 		fontSize: 18,
+	},
+	scrollview_wrapper: {
+		height: "65%",
 	},
 });

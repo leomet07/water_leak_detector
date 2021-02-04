@@ -18,16 +18,6 @@ export default class HomeScreen extends Component {
 	async componentDidMount() {
 		console.log("Home Mounted", this.state.globals);
 		this.makeApiRequest(await functions.get_token());
-		this.state.globals.emitter.on(
-			"checked_token",
-			(listener = async (token) => {
-				console.log("Checked Token Recieved");
-				const get_token = await functions.get_token();
-				console.log("get_token Recieved: ", get_token);
-
-				await this.makeApiRequest(get_token);
-			})
-		);
 
 		this.state.globals.emitter.on(
 			"logged_out_finished",
@@ -70,11 +60,11 @@ export default class HomeScreen extends Component {
 		await this.makeApiRequest(token_get);
 	};
 	new_leak_callback = async (data) => {
-		console.log("data from in home: ", data);
+		// console.log("data from in home: ", data);
 		const leaks = this.state.leaks;
-		console.log(leaks.length);
+		// console.log(leaks.length);
 		leaks.push(data);
-		console.log(leaks.length);
+		// console.log(leaks.length);
 		this.setState({ leaks: leaks });
 	};
 
@@ -91,11 +81,24 @@ export default class HomeScreen extends Component {
 			<Text>Loading...</Text>
 		);
 		// console.log(this.state.requestSent ? "request sent" : "not sent")
+
+		// return (
+		// 	<View style={styles.container}>
+		// 		<Text style={styles.title}>Water Leak Detector</Text>
+		// 		{this.state.leaks.length > 0 ? (
+		// 			<ScrollView>{leakItems}</ScrollView>
+		// 		) : (
+		// 			<React.Fragment>{loader}</React.Fragment>
+		// 		)}
+		// 	</View>
+		// );
 		return (
 			<View style={styles.container}>
-				<Text style={styles.title}>Water Leak Detector</Text>
+				<Text style={styles.title}>Home</Text>
 				{this.state.leaks.length > 0 ? (
-					<ScrollView>{leakItems}</ScrollView>
+					<View style={styles.scrollview_wrapper}>
+						<ScrollView>{leakItems}</ScrollView>
+					</View>
 				) : (
 					<React.Fragment>{loader}</React.Fragment>
 				)}
