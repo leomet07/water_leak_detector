@@ -16,10 +16,7 @@ import { not } from "react-native-reanimated";
 
 const connection_client = require("socket.io-client");
 
-var socket = connection_client("https://waterleakbackend.herokuapp.com/");
-socket.on("connect", function () {
-	console.log("Socket connected");
-});
+var socket = null;
 
 var ee = require("event-emitter");
 
@@ -97,6 +94,31 @@ export default class App extends Component {
 			(listener = async (data) => {
 				if (data.logged_in) {
 					console.log("after checked token, user IS  logged in");
+					socket = connection_client(
+						"https://waterleakbackend.herokuapp.com/",
+						{
+							query: {
+								token: data.token,
+							},
+						}
+					);
+					socket.on("connect", function () {
+						console.log("Socket connected");
+					});
+					socket.on("leak_added", (data) => {
+						console.log("leaks added from server", data);
+						try {
+							this.state.globals.emitter.emit("new_leak", data);
+						} catch (err) {
+							console.log("error in leak listener: ", err);
+						}
+					});
+					socket.on("db_check", function (data) {
+						// console.log(
+						// 	"db_check from server"
+						// 	// JSON.stringify(data)
+						// );
+					});
 				} else {
 					console.log("after checked token, user NOT logged in");
 
@@ -209,15 +231,6 @@ export default class App extends Component {
 				this.setState({ logged_in: false, token: null });
 			})
 		);
-
-		socket.on("leak_added", (data) => {
-			console.log("leaks added from server", data);
-			try {
-				this.state.globals.emitter.emit("new_leak", data);
-			} catch (err) {
-				console.log("error in leak listener: ", err);
-			}
-		});
 	}
 
 	render() {

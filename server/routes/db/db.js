@@ -38,7 +38,7 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 	res.json({ created: true, leak: savedLeak });
 
 	const io = require("../../index").io;
-	[...io.sockets.sockets.values()].some(async (element) => {
+	io.sockets.sockets.forEach(async (element) => {
 		console.log("element decoded inside of some", element.decoded);
 		let value = element.decoded._id == uid;
 
