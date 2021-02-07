@@ -39,7 +39,7 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 
 	const io = require("../../index").io;
 	[...io.sockets.sockets.values()].some(async (element) => {
-		// console.log("element decoded inside of some", element.decoded);
+		console.log("element decoded inside of some", element.decoded);
 		let value = element.decoded._id == uid;
 
 		if (value) {
