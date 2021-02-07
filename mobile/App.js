@@ -113,11 +113,13 @@ export default class App extends Component {
 							console.log("error in leak listener: ", err);
 						}
 					});
-					socket.on("db_check", function (data) {
+					socket.on("db_check", async (data) => {
 						// console.log(
 						// 	"db_check from server"
 						// 	// JSON.stringify(data)
 						// );
+						// console.log(data);
+						this.state.globals.emitter.emit("db_check", data);
 					});
 				} else {
 					console.log("after checked token, user NOT logged in");

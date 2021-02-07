@@ -28,6 +28,10 @@ export default class HomeScreen extends Component {
 			"new_leak",
 			(listener = this.new_leak_callback)
 		);
+		this.state.globals.emitter.on(
+			"db_check",
+			(listener = this.db_check_callback)
+		);
 	}
 
 	async componentWillUnmount() {
@@ -66,6 +70,9 @@ export default class HomeScreen extends Component {
 		leaks.push(data);
 		// console.log(leaks.length);
 		this.setState({ leaks: leaks });
+	};
+	db_check_callback = async (data) => {
+		this.setState({ leaks: data });
 	};
 
 	render() {
