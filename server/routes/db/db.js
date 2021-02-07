@@ -62,6 +62,6 @@ setInterval(async function () {
 		element.emit("db_check", leaks);
 	});
 	// TODO: loop through all connected verified users and just dump all the leaks that happened under their account.
-}, 2000);
+}, process.env.interval_ms || 10000);
 
 module.exports.router = router;
