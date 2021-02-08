@@ -125,10 +125,11 @@ router.get("/verify/:id", async (req, res) => {
 		if (verified) {
 			data.valid = true;
 			data.isAdmin = userisAdmin;
-
+			data.uid = uid;
 			res.send(data);
 		}
 	} catch (err) {
+		console.log("err in /verify", err);
 		res.send({
 			valid: false,
 		});
