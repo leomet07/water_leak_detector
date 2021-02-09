@@ -153,22 +153,39 @@ export default class App extends Component {
 				console.log("Read from Data", value);
 
 				// verify token here
+				let response = await fetch(
+					this.state.globals.BASE_URL + "/api/auth/verify/" + value,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
 
-				try {
-					await AsyncStorage.setItem(
-						"@authentication_save:verified_auth_token",
-						value
-					);
-				} catch (error) {
-					// Error saving data
-					console.log("Error saving data");
+				let json = await response.json();
+
+				console.log("verify results: ", json);
+
+				let valid = json.valid;
+
+				if (valid) {
+					try {
+						await AsyncStorage.setItem(
+							"@authentication_save:verified_auth_token",
+							value
+						);
+					} catch (error) {
+						// Error saving data
+						console.log("Error saving data");
+					}
 				}
 
-				this.setState({ logged_in: true, token: value });
+				this.setState({ logged_in: valid, token: value });
 				console.log("About to emit checked_token ");
 				this.state.globals.emitter.emit("checked_token", {
-					token: value,
-					logged_in: this.state.logged_in,
+					token: valid ? value : null,
+					logged_in: valid,
 				});
 			} else {
 				this.state.globals.emitter.emit("checked_token", {
