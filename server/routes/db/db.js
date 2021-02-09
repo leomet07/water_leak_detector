@@ -2,6 +2,7 @@ const router = require("express").Router();
 const verifyToken = require("../auth/verifyTokenMiddleware");
 const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const Leak = require("../../model/Leak");
+const Phone_Data = require("../../model/Phone_Data");
 // const io = ;
 
 router.use(verifyToken);
@@ -48,6 +49,23 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 		return value;
 	});
 	// io.sockets.emit("leak_added", savedLeak);
+});
+// Get all the cards, or search by params in request body.
+router.post("/phone_data", async (req, res) => {
+	console.log("phone data", req.body);
+	console.log(req.user);
+
+	let expo_token = req.body.expo_token;
+	if (expo_token) {
+		console.log("expo token: ", expo_token);
+		const phone_data = new Phone_Data({
+			expo_token: String(expo_token),
+			uid: req.user._id,
+		});
+
+		savedPhoneData = await phone_data.save();
+	}
+	return res.json({ message: "phone_data", phone_data: savedPhoneData });
 });
 
 setInterval(async function () {
