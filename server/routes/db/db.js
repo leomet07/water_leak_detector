@@ -63,7 +63,7 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
-					to: "ExponentPushToken[clpdecIBwuH5EXd4sD4JB4]",
+					to: expo_token,
 					title: "hello",
 					body: "world",
 				}),
