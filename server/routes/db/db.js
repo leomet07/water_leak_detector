@@ -64,8 +64,8 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 				},
 				body: JSON.stringify({
 					to: expo_token,
-					title: "hello",
-					body: "world",
+					title: "Water leak detected!",
+					body: "Go stop it!",
 				}),
 			});
 
