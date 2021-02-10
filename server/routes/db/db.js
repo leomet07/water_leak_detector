@@ -3,7 +3,7 @@ const verifyToken = require("../auth/verifyTokenMiddleware");
 const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const Leak = require("../../model/Leak");
 const Phone_Data = require("../../model/Phone_Data");
-// const io = ;
+const fetch = require("node-fetch");
 
 router.use(verifyToken);
 
@@ -48,24 +48,63 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 		}
 		return value;
 	});
+
+	// send out notifs
+	//find all phone datas with uid
+	let phones = await Phone_Data.find({ uid: uid });
+
+	for (let phone of phones) {
+		let expo_token = phone.expo_token;
+		console.log(expo_token);
+		try {
+			let response = await fetch("https://exp.host/--/api/v2/push/send", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					to: "ExponentPushToken[clpdecIBwuH5EXd4sD4JB4]",
+					title: "hello",
+					body: "world",
+				}),
+			});
+
+			let json = await response.json();
+
+			console.log(json);
+		} catch (err) {
+			console.log("Error sending notifs, ", err);
+		}
+		// Check that all your push tokens appear to be valid Expo push tokens
+	}
+
+	// console.log("phones lol", expo_tokens);
+
 	// io.sockets.emit("leak_added", savedLeak);
 });
 // Get all the cards, or search by params in request body.
-router.post("/phone_data", async (req, res) => {
+router.post("/create_phone_data", async (req, res) => {
 	console.log("phone data", req.body);
 	console.log(req.user);
 
 	let expo_token = req.body.expo_token;
 	if (expo_token) {
 		console.log("expo token: ", expo_token);
-		const phone_data = new Phone_Data({
-			expo_token: String(expo_token),
-			uid: req.user._id,
-		});
 
-		savedPhoneData = await phone_data.save();
+		const to_write = { uid: req.user._id, expo_token: expo_token };
+
+		// expo token never changes
+		const updated = await Phone_Data.findOneAndUpdate(
+			{ expo_token: expo_token },
+			to_write,
+			{
+				upsert: true,
+			}
+		);
+		const saved = await updated.save();
+
+		return res.json({ phone_data: saved });
 	}
-	return res.json({ message: "phone_data", phone_data: savedPhoneData });
 });
 
 setInterval(async function () {
