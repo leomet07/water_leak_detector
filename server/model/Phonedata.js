@@ -11,6 +11,6 @@ const phoneDataSchema = new mongoose.Schema({
 	},
 });
 
-const phoneDataModel = mongoose.model("Phone_Data", phoneDataSchema);
+const phoneDataModelfordb = mongoose.model("Phone_Data", phoneDataSchema);
 
-module.exports = phoneDataModel;
+module.exports = phoneDataModelfordb;
