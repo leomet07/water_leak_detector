@@ -2,7 +2,7 @@ const router = require("express").Router();
 const verifyToken = require("../auth/verifyTokenMiddleware");
 const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const Leak = require("../../model/Leak");
-const Phone_Data = require("../../model/Phone_Data");
+const Phone_Data = require("../../model/Phonedata");
 const fetch = require("node-fetch");
 
 router.use(verifyToken);
