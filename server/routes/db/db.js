@@ -75,12 +75,7 @@ router.post("/create", isAdminMiddleware, async (req, res) => {
 		} catch (err) {
 			console.log("Error sending notifs, ", err);
 		}
-		// Check that all your push tokens appear to be valid Expo push tokens
 	}
-
-	// console.log("phones lol", expo_tokens);
-
-	// io.sockets.emit("leak_added", savedLeak);
 });
 // Get all the cards, or search by params in request body.
 router.post("/create_phone_data", async (req, res) => {
