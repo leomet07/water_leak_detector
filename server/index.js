@@ -19,6 +19,7 @@ const io = require("socket.io")(http, {
 
 if (process.env.dev != "true") {
 	console.log("Enforcing rate limits for prod");
+	app.set("trust proxy", 1);
 	const rateLimiter = rateLimit({
 		windowMs: 3 * 60 * 1000, // 3 minutes
 		max: 8, // limit each IP to 8 requests per windowMs
