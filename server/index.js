@@ -25,9 +25,9 @@ if (process.env.dev != "true") {
 		max: 8, // limit each IP to 8 requests per windowMs
 	});
 	const speedLimiter = slowDown({
-		windowMs: 500, // half second
+		windowMs: 3 * 1000, // half second
 		delayAfter: 1, // allow 100 requests per 5 seconds, then...
-		delayMs: 500, // begin adding 500ms of delay per request
+		delayMs: 2000, // begin adding 500ms of delay per request
 	});
 	//  apply to all requests
 	app.use(rateLimiter);
