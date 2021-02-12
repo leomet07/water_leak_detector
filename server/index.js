@@ -7,14 +7,33 @@ const dotenv = require("dotenv").config();
 const handlers = require("./routes/io/handlers");
 const app = express();
 const jwt = require("jsonwebtoken");
-
+const rateLimit = require("express-rate-limit");
 var http = require("http").createServer(app);
+const slowDown = require("express-slow-down");
 
 const io = require("socket.io")(http, {
 	cors: {
 		origin: "*",
 	},
 });
+
+if (process.env.dev != "true") {
+	console.log("Enforcing rate limits for prod");
+	const rateLimiter = rateLimit({
+		windowMs: 3 * 60 * 1000, // 3 minutes
+		max: 8, // limit each IP to 8 requests per windowMs
+	});
+	const speedLimiter = slowDown({
+		windowMs: 500, // half second
+		delayAfter: 1, // allow 100 requests per 5 seconds, then...
+		delayMs: 500, // begin adding 500ms of delay per request
+	});
+	//  apply to all requests
+	app.use(rateLimiter);
+	app.use(speedLimiter);
+} else {
+	console.log("Rate limits not enforced in dev.");
+}
 
 // Middleware
 app.use(cors());
