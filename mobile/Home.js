@@ -89,16 +89,6 @@ export default class HomeScreen extends Component {
 		);
 		// console.log(this.state.requestSent ? "request sent" : "not sent")
 
-		// return (
-		// 	<View style={styles.container}>
-		// 		<Text style={styles.title}>Water Leak Detector</Text>
-		// 		{this.state.leaks.length > 0 ? (
-		// 			<ScrollView>{leakItems}</ScrollView>
-		// 		) : (
-		// 			<React.Fragment>{loader}</React.Fragment>
-		// 		)}
-		// 	</View>
-		// );
 		return (
 			<View style={styles.container}>
 				<Text style={styles.title}>Home</Text>

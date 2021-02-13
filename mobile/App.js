@@ -69,6 +69,7 @@ export default class App extends Component {
 		}
 		const token = (await Notifications.getExpoPushTokenAsync()).data;
 		console.log(token);
+
 		this.setState({ expoPushToken: token });
 
 		if (Platform.OS === "android") {
@@ -93,7 +94,7 @@ export default class App extends Component {
 			"checked_token",
 			(listener = async (data) => {
 				if (data.logged_in) {
-					console.log("after checked token, user IS  logged in");
+					console.log("after checked token, user IS logged in");
 					socket = connection_client(
 						"https://waterleakbackend.herokuapp.com/",
 						{
@@ -105,22 +106,44 @@ export default class App extends Component {
 					socket.on("connect", function () {
 						console.log("Socket connected");
 					});
-					socket.on("leak_added", (data) => {
-						console.log("leaks added from server", data);
+					socket.on("leak_added", (leaks) => {
+						console.log("leaks added from server", leaks);
 						try {
-							this.state.globals.emitter.emit("new_leak", data);
+							this.state.globals.emitter.emit("new_leak", leaks);
 						} catch (err) {
 							console.log("error in leak listener: ", err);
 						}
 					});
-					socket.on("db_check", async (data) => {
-						// console.log(
-						// 	"db_check from server"
-						// 	// JSON.stringify(data)
-						// );
-						// console.log(data);
-						this.state.globals.emitter.emit("db_check", data);
+					socket.on("db_check", async (db_check) => {
+						this.state.globals.emitter.emit("db_check", db_check);
 					});
+
+					if (this.state.expoPushToken) {
+						console.log(
+							"expo push token exists",
+							this.state.expoPushToken
+						);
+						const create_phone_data_request = await fetch(
+							"https://waterleakbackend.herokuapp.com/api/db/create_phone_data",
+							{
+								method: "POST",
+								headers: {
+									"Content-Type": "application/json",
+									"auth-token": data.token,
+								},
+								body: JSON.stringify({
+									expo_token: this.state.expoPushToken,
+								}),
+							}
+						);
+						const create_phone_data_response = await create_phone_data_request.json();
+
+						console.log(create_phone_data_response);
+					} else {
+						console.log(
+							"Expo notification not available so it will not be logged."
+						);
+					}
 				} else {
 					console.log("after checked token, user NOT logged in");
 
