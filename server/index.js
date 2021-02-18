@@ -29,8 +29,8 @@ if (process.env.dev != "true") {
 	});
 	const speedLimiter = slowDown({
 		windowMs: 4.5 * 1000, // half second
-		delayAfter: 1, // allow 100 requests per 5 seconds, then...
-		delayMs: 2000, // begin adding 500ms of delay per request
+		delayAfter: 3, // allow 100 requests per 5 seconds, then...
+		delayMs: 1000, // begin adding 500ms of delay per request
 	});
 	//  apply to all requests
 	app.use(rateLimiter);
