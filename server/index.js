@@ -22,7 +22,10 @@ if (process.env.dev != "true") {
 	app.set("trust proxy", 1);
 	const rateLimiter = rateLimit({
 		windowMs: 1 * 60 * 1000, // 3 minutes
-		max: 8, // limit each IP to 8 requests per windowMs
+		max: 8, // limit each IP to 8 requests per windowMs,
+		message: {
+			message: "Too many requests, slow down",
+		},
 	});
 	const speedLimiter = slowDown({
 		windowMs: 4.5 * 1000, // half second
