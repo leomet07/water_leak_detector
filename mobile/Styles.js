@@ -41,5 +41,16 @@ export default styles = StyleSheet.create({
 	},
 	scrollview_wrapper: {
 		height: "65%",
+		width: "90%",
+	},
+	leak_div: {
+		borderWidth: 4,
+		borderColor: "#20232a",
+		borderRadius: 6,
+		padding: 10,
+		margin: 10,
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });

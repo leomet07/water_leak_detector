@@ -39,21 +39,24 @@ export default class HomeScreen extends Component {
 	}
 
 	makeApiRequest = async (token) => {
-		let leaks = [];
+		let leaks = null;
 		if (token) {
-			let uri = this.state.globals.BASE_URL + "/api/db/get_leaks";
-			this.setState({ requestSent: true });
-			let response = await fetch(uri, {
-				method: "GET",
-				headers: {
-					"auth-token": token,
-				},
-			});
+			while (!Array.isArray(leaks)) {
+				let uri = this.state.globals.BASE_URL + "/api/db/get_leaks";
+				this.setState({ requestSent: true });
+				let response = await fetch(uri, {
+					method: "GET",
+					headers: {
+						"auth-token": token,
+					},
+				});
 
-			leaks = await response.json();
-			// console.log(leaks)
+				leaks = await response.json();
 
-			this.setState({ leaks: leaks });
+				console.log("leakss recieved from api", leaks);
+
+				this.setState({ leaks: leaks });
+			}
 		}
 	};
 	logged_out_callback = async () => {
@@ -79,7 +82,11 @@ export default class HomeScreen extends Component {
 		const leakItems = this.state.leaks.map((data) => {
 			let uri = data._id;
 			// console.log(uri)
-			return <Text key={uri}>{data.date}</Text>;
+			return (
+				<View style={styles.leak_div} key={uri}>
+					<Text>{data.date}</Text>
+				</View>
+			);
 		});
 
 		const loader = this.state.requestSent ? (
