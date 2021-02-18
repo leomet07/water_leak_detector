@@ -21,11 +21,11 @@ if (process.env.dev != "true") {
 	console.log("Enforcing rate limits for prod");
 	app.set("trust proxy", 1);
 	const rateLimiter = rateLimit({
-		windowMs: 3 * 60 * 1000, // 3 minutes
+		windowMs: 1 * 60 * 1000, // 3 minutes
 		max: 8, // limit each IP to 8 requests per windowMs
 	});
 	const speedLimiter = slowDown({
-		windowMs: 3 * 1000, // half second
+		windowMs: 4.5 * 1000, // half second
 		delayAfter: 1, // allow 100 requests per 5 seconds, then...
 		delayMs: 2000, // begin adding 500ms of delay per request
 	});
