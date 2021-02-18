@@ -7,9 +7,8 @@ const dotenv = require("dotenv").config();
 const handlers = require("./routes/io/handlers");
 const app = express();
 const jwt = require("jsonwebtoken");
-const rateLimit = require("express-rate-limit");
+
 var http = require("http").createServer(app);
-const slowDown = require("express-slow-down");
 
 const io = require("socket.io")(http, {
 	cors: {
@@ -18,25 +17,10 @@ const io = require("socket.io")(http, {
 });
 
 if (process.env.dev != "true") {
-	console.log("Enforcing rate limits for prod");
+	console.log("Enforcin production settings");
 	app.set("trust proxy", 1);
-	const rateLimiter = rateLimit({
-		windowMs: 1 * 60 * 1000, // 3 minutes
-		max: 8, // limit each IP to 8 requests per windowMs,
-		message: {
-			message: "Too many requests, slow down",
-		},
-	});
-	const speedLimiter = slowDown({
-		windowMs: 4.5 * 1000, // half second
-		delayAfter: 3, // allow 100 requests per 5 seconds, then...
-		delayMs: 1000, // begin adding 500ms of delay per request
-	});
-	//  apply to all requests
-	app.use(rateLimiter);
-	app.use(speedLimiter);
 } else {
-	console.log("Rate limits not enforced in dev.");
+	console.log("Production config not set for dev");
 }
 
 // Middleware

@@ -4,7 +4,7 @@ const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const Leak = require("../../model/Leak");
 const Phone_Data = require("../../model/Phonedata");
 const fetch = require("node-fetch");
-
+const limiters = require("../../limiters");
 router.use(verifyToken);
 
 // Get all the cards, or search by params in request body.
@@ -23,60 +23,69 @@ router.get("/get_leaks", async (req, res) => {
 	}
 });
 // Get all the cards, or search by params in request body.
-router.post("/create", isAdminMiddleware, async (req, res) => {
-	console.log("req.user", req.user);
-	console.log("Body", req.body);
+router.post(
+	"/create",
+	isAdminMiddleware,
+	limiters.rateLimiter,
+	limiters.speedLimiter,
+	async (req, res) => {
+		console.log("req.user", req.user);
+		console.log("Body", req.body);
 
-	const uid = req.user._id;
+		const uid = req.user._id;
 
-	const leak = new Leak({
-		date: Date.now().toString(),
-		uid: uid,
-	});
+		const leak = new Leak({
+			date: Date.now().toString(),
+			uid: uid,
+		});
 
-	savedLeak = await leak.save();
+		savedLeak = await leak.save();
 
-	res.json({ created: true, leak: savedLeak });
+		res.json({ created: true, leak: savedLeak });
 
-	const io = require("../../index").io;
-	io.sockets.sockets.forEach(async (element) => {
-		console.log("element decoded inside of some", element.decoded);
-		let value = element.decoded._id == uid;
+		const io = require("../../index").io;
+		io.sockets.sockets.forEach(async (element) => {
+			console.log("element decoded inside of some", element.decoded);
+			let value = element.decoded._id == uid;
 
-		if (value) {
-			element.emit("leak_added", savedLeak);
-		}
-		return value;
-	});
+			if (value) {
+				element.emit("leak_added", savedLeak);
+			}
+			return value;
+		});
 
-	// send out notifs
-	//find all phone datas with uid
-	let phones = await Phone_Data.find({ uid: uid });
+		// send out notifs
+		//find all phone datas with uid
+		let phones = await Phone_Data.find({ uid: uid });
 
-	for (let phone of phones) {
-		let expo_token = phone.expo_token;
-		console.log(expo_token);
-		try {
-			let response = await fetch("https://exp.host/--/api/v2/push/send", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					to: expo_token,
-					title: "Water leak detected!",
-					body: "Go stop it!",
-				}),
-			});
+		for (let phone of phones) {
+			let expo_token = phone.expo_token;
+			console.log(expo_token);
+			try {
+				let response = await fetch(
+					"https://exp.host/--/api/v2/push/send",
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify({
+							to: expo_token,
+							title: "Water leak detected!",
+							body: "Go stop it!",
+						}),
+					}
+				);
 
-			let json = await response.json();
+				let json = await response.json();
 
-			console.log(json);
-		} catch (err) {
-			console.log("Error sending notifs, ", err);
+				console.log(json);
+			} catch (err) {
+				console.log("Error sending notifs, ", err);
+			}
 		}
 	}
-});
+);
 // Get all the cards, or search by params in request body.
 router.post("/create_phone_data", async (req, res) => {
 	console.log("phone data", req.body);
