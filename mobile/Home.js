@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, ScrollView } from "react-native";
+import { Text, Image, View, ScrollView } from "react-native";
 import styles from "./Styles";
 import functions from "./Functions";
 
@@ -75,7 +75,7 @@ export default class HomeScreen extends Component {
 		this.setState({ leaks: leaks });
 	};
 	db_check_callback = async (data) => {
-		this.setState({ leaks: data });
+		// this.setState({ leaks: data });
 	};
 
 	render() {
@@ -90,7 +90,13 @@ export default class HomeScreen extends Component {
 		});
 
 		const loader = this.state.requestSent ? (
-			<Text>Waiting For Response</Text>
+			<React.Fragment>
+				<Text>Waiting for response</Text>
+				<Image
+					style={styles.loading_gif}
+					source={require("./assets/loading.gif")}
+				/>
+			</React.Fragment>
 		) : (
 			<Text>Loading...</Text>
 		);

@@ -68,9 +68,10 @@ export default class App extends Component {
 			return;
 		}
 		const token = (await Notifications.getExpoPushTokenAsync()).data;
-		console.log(token);
+		console.log("expo push token: ", token);
 
 		this.setState({ expoPushToken: token });
+		this.state.globals.emitter.emit("expo_token", token);
 
 		if (Platform.OS === "android") {
 			Notifications.setNotificationChannelAsync("default", {
@@ -89,20 +90,48 @@ export default class App extends Component {
 	_handleNotificationResponse = (response) => {
 		console.log(response);
 	};
+
+	handleExpoTokenTransfer = async (expo_token, auth_token) => {
+		if (expo_token) {
+			console.log("expo push token exists", this.state.expoPushToken);
+			const create_phone_data_request = await fetch(
+				this.state.globals.BASE_URL + "/api/db/create_phone_data",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+						"auth-token": auth_token,
+					},
+					body: JSON.stringify({
+						expo_token: expo_token,
+					}),
+				}
+			);
+			const create_phone_data_response = await create_phone_data_request.text();
+			console.log("raw text response, ", create_phone_data_response);
+
+			const create_phone_data_json = JSON.parse(
+				create_phone_data_response
+			);
+
+			console.log("phone_data response: ", create_phone_data_response);
+		} else {
+			console.log(
+				"Expo notification not available so it will not be logged."
+			);
+		}
+	};
 	async componentDidMount() {
 		this.state.globals.emitter.on(
 			"checked_token",
 			(listener = async (data) => {
 				if (data.logged_in) {
 					console.log("after checked token, user IS logged in");
-					socket = connection_client(
-						"https://waterleakbackend.herokuapp.com/",
-						{
-							query: {
-								token: data.token,
-							},
-						}
-					);
+					socket = connection_client(this.state.globals.BASE_URL, {
+						query: {
+							token: data.token,
+						},
+					});
 					socket.on("connect", function () {
 						console.log("Socket connected");
 					});
@@ -117,33 +146,27 @@ export default class App extends Component {
 					socket.on("db_check", async (db_check) => {
 						this.state.globals.emitter.emit("db_check", db_check);
 					});
-
 					if (this.state.expoPushToken) {
 						console.log(
-							"expo push token exists",
-							this.state.expoPushToken
+							"expo notif token recieved before auth token"
 						);
-						const create_phone_data_request = await fetch(
-							"https://waterleakbackend.herokuapp.com/api/db/create_phone_data",
-							{
-								method: "POST",
-								headers: {
-									"Content-Type": "application/json",
-									"auth-token": data.token,
-								},
-								body: JSON.stringify({
-									expo_token: this.state.expoPushToken,
-								}),
-							}
-						);
-						const create_phone_data_response = await create_phone_data_request.json();
-
-						console.log(create_phone_data_response);
-					} else {
-						console.log(
-							"Expo notification not available so it will not be logged."
+						this.handleExpoTokenTransfer(
+							this.state.expoPushToken,
+							data.token
 						);
 					}
+					this.state.globals.emitter.on(
+						"expo_token",
+						(listener = async (expo_token) => {
+							console.log(
+								"expo notif token recieved after auth token"
+							);
+							this.handleExpoTokenTransfer(
+								expo_token,
+								data.token
+							);
+						})
+					);
 				} else {
 					console.log("after checked token, user NOT logged in");
 
@@ -248,6 +271,7 @@ export default class App extends Component {
 				});
 			})
 		);
+
 		this.state.globals.emitter.on(
 			"logged_out",
 			(listener = async (json) => {
@@ -335,11 +359,21 @@ export default class App extends Component {
 							/>
 						</React.Fragment>
 					) : (
-						<Tab.Screen
-							name="Login"
-							initialParams={submitGlobals}
-							component={LoginScreen}
-						/>
+						<React.Fragment>
+							{this.state.globals.token ? (
+								<Tab.Screen
+									name="Loading"
+									initialParams={submitGlobals}
+									component={LoadingScreen}
+								/>
+							) : (
+								<Tab.Screen
+									name="Login"
+									initialParams={submitGlobals}
+									component={LoginScreen}
+								/>
+							)}
+						</React.Fragment>
 					)}
 				</Tab.Navigator>
 			</NavigationContainer>

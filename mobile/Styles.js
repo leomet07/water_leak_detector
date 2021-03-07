@@ -53,4 +53,8 @@ export default styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 	},
+	loading_gif: {
+		width: 200,
+		height: 200,
+	},
 });
