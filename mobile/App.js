@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import styles from "./Styles";
 import HomeScreen from "./Home";
 import LoginScreen from "./Login";
+import RegisterScreen from "./Register";
 import SettingsScreen from "./Settings";
 import * as Device from "expo-device";
 import { AsyncStorage } from "react-native";
@@ -269,6 +270,13 @@ export default class App extends Component {
 					logged_in: this.state.logged_in,
 					token: json.token,
 				});
+				if (this.state.expoPushToken) {
+					console.log("remapping phone token to new user account");
+					this.handleExpoTokenTransfer(
+						this.state.expoPushToken,
+						json.token
+					);
+				}
 			})
 		);
 
@@ -324,6 +332,10 @@ export default class App extends Component {
 									: "ios-information-circle-outline";
 							} else if (route.name === "Login") {
 								iconName = focused ? "md-person" : "md-person";
+							} else if (route.name === "Register") {
+								iconName = focused
+									? "ios-add-circle"
+									: "ios-add-circle";
 							} else if (route.name === "Settings") {
 								iconName = focused
 									? "ios-list-box"
@@ -367,11 +379,18 @@ export default class App extends Component {
 									component={LoadingScreen}
 								/>
 							) : (
-								<Tab.Screen
-									name="Login"
-									initialParams={submitGlobals}
-									component={LoginScreen}
-								/>
+								<React.Fragment>
+									<Tab.Screen
+										name="Login"
+										initialParams={submitGlobals}
+										component={LoginScreen}
+									/>
+									<Tab.Screen
+										name="Register"
+										initialParams={submitGlobals}
+										component={RegisterScreen}
+									/>
+								</React.Fragment>
 							)}
 						</React.Fragment>
 					)}
