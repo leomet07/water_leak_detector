@@ -24,7 +24,7 @@ router.get("/get_leaks", async (req, res) => {
 });
 // Get all the cards, or search by params in request body.
 router.post(
-	"/create",
+	"/create_leak",
 	isAdminMiddleware,
 	limiters.rateLimiter,
 	limiters.speedLimiter,
@@ -109,6 +109,10 @@ router.post("/create_phone_data", async (req, res) => {
 
 		return res.json({ phone_data: saved });
 	}
+});
+
+router.post("/create_device", async (req, res) => {
+	res.json({ message: "create device" });
 });
 
 setInterval(async function () {
