@@ -3,6 +3,7 @@ const verifyToken = require("../auth/verifyTokenMiddleware");
 const isAdminMiddleware = require("../auth/isAdminMiddleware");
 const Leak = require("../../model/Leak");
 const Phone_Data = require("../../model/Phonedata");
+const Detector = require("../../model/Detector");
 const fetch = require("node-fetch");
 const limiters = require("../../limiters");
 router.use(verifyToken);
@@ -111,8 +112,15 @@ router.post("/create_phone_data", async (req, res) => {
 	}
 });
 
-router.post("/create_device", async (req, res) => {
-	res.json({ message: "create device" });
+router.post("/create_detector", async (req, res) => {
+	const detector = new Detector({
+		location: req.body.location,
+		name: req.body.name,
+		uid: req.body.uid,
+	});
+
+	const savedDetector = await detector.save();
+	res.json(savedDetector);
 });
 
 setInterval(async function () {
