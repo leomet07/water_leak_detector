@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const verifyToken = require("../auth/verifyTokenMiddleware");
 const isAdminMiddleware = require("../auth/isAdminMiddleware");
+const isValidDetectorMiddleware = require("../auth/isValidDetectorMiddleware");
 const Leak = require("../../model/Leak");
 const Phone_Data = require("../../model/Phonedata");
 const Detector = require("../../model/Detector");
@@ -26,7 +27,7 @@ router.get("/get_leaks", async (req, res) => {
 // Get all the cards, or search by params in request body.
 router.post(
 	"/create_leak",
-	isAdminMiddleware,
+	isValidDetectorMiddleware,
 	limiters.rateLimiter,
 	limiters.speedLimiter,
 	async (req, res) => {

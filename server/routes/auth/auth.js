@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const User = require("../../model/User");
+const Detector = require("../../model/Detector");
 const { registerValidation, loginValidation } = require("./validation");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -139,4 +140,12 @@ async function checkIsAdmin(uid) {
 	const user = await User.findById(uid);
 	return user.isAdmin;
 }
-module.exports = { router: router, checkIsAdmin: checkIsAdmin };
+async function checkIsValidDetector(detectorid) {
+	const detector = await Detector.findById(detectorid);
+	return detector ? true : false;
+}
+module.exports = {
+	router: router,
+	checkIsAdmin: checkIsAdmin,
+	checkIsValidDetector: checkIsValidDetector,
+};
