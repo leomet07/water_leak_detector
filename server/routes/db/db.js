@@ -14,7 +14,7 @@ router.get("/get_leaks", async (req, res) => {
 	try {
 		console.log("req.user in get_leaks", req.user);
 
-		let leaks = await Leak.find({ uid: req.user._id });
+		let leaks = await Leak.find({ uid: req.user._id }).populate("detector");
 
 		res.json(leaks);
 	} catch (err) {
@@ -39,6 +39,7 @@ router.post(
 		const leak = new Leak({
 			date: Date.now().toString(),
 			uid: uid,
+			detector: req.header("detectorid"),
 		});
 
 		savedLeak = await leak.save();
