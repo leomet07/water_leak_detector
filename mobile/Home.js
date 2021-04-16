@@ -85,6 +85,8 @@ export default class HomeScreen extends Component {
 			return (
 				<View style={styles.leak_div} key={uri}>
 					<Text>{data.date}</Text>
+					<Text>Detector nickname: {data.detector.name}</Text>
+					<Text>Detector Location: {data.detector.location}</Text>
 				</View>
 			);
 		});
