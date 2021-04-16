@@ -133,7 +133,9 @@ setInterval(async function () {
 	// console.log(io.sockets.sockets.size);
 	io.sockets.sockets.forEach(async (element) => {
 		// console.log(element.decoded);
-		let leaks = await Leak.find({ uid: element.decoded._id });
+		let leaks = await Leak.find({ uid: element.decoded._id }).populate(
+			"detector"
+		);
 		element.emit("db_check", leaks);
 	});
 	// TODO: loop through all connected verified users and just dump all the leaks that happened under their account.
