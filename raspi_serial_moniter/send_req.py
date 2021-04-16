@@ -1,7 +1,7 @@
 import requests
 import os
 def send_req():
-    url = "https://waterleakbackend.herokuapp.com/api/db/create"
+    url = "https://waterleakbackend.herokuapp.com/api/db/create_leak"
 
     payload = "{}"
     headers = {
