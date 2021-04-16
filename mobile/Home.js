@@ -75,7 +75,7 @@ export default class HomeScreen extends Component {
 		this.setState({ leaks: leaks });
 	};
 	db_check_callback = async (data) => {
-		// this.setState({ leaks: data });
+		this.setState({ leaks: data });
 	};
 
 	render() {
