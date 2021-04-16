@@ -42,9 +42,12 @@ router.post(
 			detector: req.header("detectorid"),
 		});
 
-		savedLeak = await leak.save();
+		const written_leak = await leak.save();
 
-		res.json({ created: true, leak: savedLeak });
+		res.json({ created: true, leak: written_leak });
+		const populated_leak = await Leak.findById(written_leak._id).populate(
+			"detector"
+		);
 
 		const io = require("../../index").io;
 		io.sockets.sockets.forEach(async (element) => {
@@ -52,7 +55,7 @@ router.post(
 			let value = element.decoded._id == uid;
 
 			if (value) {
-				element.emit("leak_added", savedLeak);
+				element.emit("leak_added", populated_leak);
 			}
 			return value;
 		});
