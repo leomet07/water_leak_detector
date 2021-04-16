@@ -6,7 +6,8 @@ def send_req():
     payload = "{}"
     headers = {
         'Content-Type': "application/json",
-        'auth-token': os.getenv("auth-token")
+        'auth-token': os.getenv("auth-token"),
+        'detectorid': os.getenv("detectorid"),
         }
 
     response = requests.request("POST", url, data=payload, headers=headers)
