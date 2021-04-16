@@ -12,6 +12,7 @@ export default class HomeScreen extends Component {
 			leaks: [],
 			globals: props.route.params.globals,
 			requestSent: false,
+			isAlone: false,
 		};
 	}
 
@@ -55,7 +56,7 @@ export default class HomeScreen extends Component {
 
 				console.log("leakss recieved from api", leaks);
 
-				this.setState({ leaks: leaks });
+				this.set_leaks(leaks);
 			}
 		}
 	};
@@ -72,11 +73,15 @@ export default class HomeScreen extends Component {
 		// console.log(leaks.length);
 		leaks.push(data);
 		// console.log(leaks.length);
-		this.setState({ leaks: leaks });
+		this.set_leaks(leaks);
 	};
 	db_check_callback = async (data) => {
-		this.setState({ leaks: data });
+		this.set_leaks(data);
 	};
+
+	set_leaks(leaks) {
+		this.setState({ leaks: leaks, isAlone: leaks.length == 0 });
+	}
 
 	render() {
 		const leakItems = this.state.leaks.map((data) => {
@@ -112,7 +117,15 @@ export default class HomeScreen extends Component {
 						<ScrollView>{leakItems}</ScrollView>
 					</View>
 				) : (
-					<React.Fragment>{loader}</React.Fragment>
+					<View>
+						{!this.state.isAlone ? (
+							<React.Fragment>{loader}</React.Fragment>
+						) : (
+							<React.Fragment>
+								<Text>No water leaks detected!</Text>
+							</React.Fragment>
+						)}
+					</View>
 				)}
 			</View>
 		);
