@@ -11,6 +11,7 @@ import HomeScreen from "./Home";
 import LoginScreen from "./Login";
 import RegisterScreen from "./Register";
 import SettingsScreen from "./Settings";
+import AboutScreen from "./About";
 import * as Device from "expo-device";
 import { AsyncStorage } from "react-native";
 import { not } from "react-native-reanimated";
@@ -340,6 +341,10 @@ export default class App extends Component {
 								iconName = focused
 									? "ios-list-box"
 									: "ios-list";
+							} else if (route.name === "About") {
+								iconName = focused
+									? "ios-list-box"
+									: "ios-list";
 							}
 
 							// You can return any component that you like here!
@@ -394,6 +399,11 @@ export default class App extends Component {
 							)}
 						</React.Fragment>
 					)}
+					<Tab.Screen
+						name="About"
+						initialParams={submitGlobals}
+						component={AboutScreen}
+					/>
 				</Tab.Navigator>
 			</NavigationContainer>
 		);

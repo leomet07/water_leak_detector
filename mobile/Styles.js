@@ -4,7 +4,7 @@ export default styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		paddingTop: "15%",
-
+		padding: 10,
 		backgroundColor: "#fff",
 		alignItems: "center",
 		justifyContent: "center",
@@ -56,5 +56,12 @@ export default styles = StyleSheet.create({
 	loading_gif: {
 		width: 200,
 		height: 200,
+	},
+	center_text: {
+		textAlign: "center",
+	},
+	link: {
+		color: "blue",
+		textDecorationLine: "underline",
 	},
 });
