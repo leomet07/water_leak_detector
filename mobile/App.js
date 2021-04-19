@@ -5,7 +5,7 @@ import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, AntDesign } from "@expo/vector-icons";
 import styles from "./Styles";
 import HomeScreen from "./Home";
 import LoginScreen from "./Login";
@@ -326,6 +326,7 @@ export default class App extends Component {
 					screenOptions={({ route }) => ({
 						tabBarIcon: ({ focused, color, size }) => {
 							let iconName;
+							let iconCatagory = "Ionicon";
 
 							if (route.name === "Home") {
 								iconName = focused
@@ -343,18 +344,29 @@ export default class App extends Component {
 									: "ios-list";
 							} else if (route.name === "About") {
 								iconName = focused
-									? "ios-list-box"
-									: "ios-list";
+									? "infocirlce"
+									: "infocirlce";
+								iconCatagory = "AntDesign";
+								size -= 3;
 							}
-
 							// You can return any component that you like here!
-							return (
-								<Ionicons
-									name={iconName}
-									size={size}
-									color={color}
-								/>
-							);
+							if (iconCatagory == "Ionicon") {
+								return (
+									<Ionicons
+										name={iconName}
+										size={size}
+										color={color}
+									/>
+								);
+							} else if (iconCatagory == "AntDesign") {
+								return (
+									<AntDesign
+										name={iconName}
+										size={size}
+										color={color}
+									/>
+								);
+							}
 						},
 					})}
 					tabBarOptions={{
