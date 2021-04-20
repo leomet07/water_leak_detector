@@ -28,7 +28,7 @@ export default class AboutScreen extends Component {
 					style={styles.link}
 					onPress={() =>
 						Linking.openURL(
-							"***REMOVED***"
+							"https://github.com/leomet07/water_leak_detector"
 						)
 					}
 				>
