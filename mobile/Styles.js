@@ -64,4 +64,8 @@ export default styles = StyleSheet.create({
 		color: "blue",
 		textDecorationLine: "underline",
 	},
+	loading_icon: {
+		width: 25,
+		height: 25,
+	},
 });

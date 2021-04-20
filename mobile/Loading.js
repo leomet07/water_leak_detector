@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import { Text, View, TextInput, Button, TouchableOpacity } from "react-native";
+import { Text, View, Image } from "react-native";
 import styles from "./Styles";
-export default class LoginScreen extends Component {
+export default class LoadingScreen extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -14,7 +14,12 @@ export default class LoginScreen extends Component {
 	render() {
 		return (
 			<View style={styles.container}>
-				<Text style={styles.title}>Loading Screen</Text>
+				<Text style={styles.title}>Loading...</Text>
+				<Text>Establishing a connection...</Text>
+				<Image
+					style={styles.loading_gif}
+					source={require("./assets/loading.gif")}
+				/>
 			</View>
 		);
 	}

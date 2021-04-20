@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View } from "react-native";
+import { Text, View, Image } from "react-native";
 // import { Notifications } from "expo";
 import * as Notifications from "expo-notifications";
 import * as Permissions from "expo-permissions";
@@ -12,6 +12,7 @@ import LoginScreen from "./Login";
 import RegisterScreen from "./Register";
 import SettingsScreen from "./Settings";
 import AboutScreen from "./About";
+import LoadingScreen from "./Loading";
 import * as Device from "expo-device";
 import { AsyncStorage } from "react-native";
 import { not } from "react-native-reanimated";
@@ -49,6 +50,7 @@ export default class App extends Component {
 				token: null,
 			},
 			logged_in: false,
+			isConnectionEstablished: false,
 		};
 	}
 
@@ -134,8 +136,9 @@ export default class App extends Component {
 							token: data.token,
 						},
 					});
-					socket.on("connect", function () {
+					socket.on("connect", () => {
 						console.log("Socket connected");
+						this.setState({ isConnectionEstablished: true });
 					});
 					socket.on("leak_added", (leaks) => {
 						console.log("leaks added from server", leaks);
@@ -348,6 +351,8 @@ export default class App extends Component {
 									: "infocirlce";
 								iconCatagory = "AntDesign";
 								size -= 3;
+							} else if (route.name === "Loading") {
+								iconCatagory = "LoadingGif";
 							}
 							// You can return any component that you like here!
 							if (iconCatagory == "Ionicon") {
@@ -366,6 +371,13 @@ export default class App extends Component {
 										color={color}
 									/>
 								);
+							} else if (iconCatagory == "LoadingGif") {
+								return (
+									<Image
+										style={styles.loading_icon}
+										source={require("./assets/loading.gif")}
+									/>
+								);
 							}
 						},
 					})}
@@ -374,48 +386,62 @@ export default class App extends Component {
 						inactiveTintColor: "gray",
 					}}
 				>
-					{this.state.logged_in ? (
+					{this.state.isConnectionEstablished ? (
 						<React.Fragment>
+							{this.state.logged_in ? (
+								<React.Fragment>
+									<Tab.Screen
+										name="Home"
+										initialParams={{
+											globals: this.state.globals,
+										}}
+										component={HomeScreen}
+									/>
+									<Tab.Screen
+										name="Settings"
+										initialParams={{
+											globals: this.state.globals,
+										}}
+										component={SettingsScreen}
+									/>
+								</React.Fragment>
+							) : (
+								<React.Fragment>
+									{this.state.globals.token ? (
+										<Tab.Screen
+											name="Loading"
+											initialParams={submitGlobals}
+											component={LoadingScreen}
+										/>
+									) : (
+										<React.Fragment>
+											<Tab.Screen
+												name="Login"
+												initialParams={submitGlobals}
+												component={LoginScreen}
+											/>
+											<Tab.Screen
+												name="Register"
+												initialParams={submitGlobals}
+												component={RegisterScreen}
+											/>
+										</React.Fragment>
+									)}
+								</React.Fragment>
+							)}
 							<Tab.Screen
-								name="Home"
-								initialParams={{ globals: this.state.globals }}
-								component={HomeScreen}
-							/>
-							<Tab.Screen
-								name="Settings"
-								initialParams={{ globals: this.state.globals }}
-								component={SettingsScreen}
+								name="About"
+								initialParams={submitGlobals}
+								component={AboutScreen}
 							/>
 						</React.Fragment>
 					) : (
-						<React.Fragment>
-							{this.state.globals.token ? (
-								<Tab.Screen
-									name="Loading"
-									initialParams={submitGlobals}
-									component={LoadingScreen}
-								/>
-							) : (
-								<React.Fragment>
-									<Tab.Screen
-										name="Login"
-										initialParams={submitGlobals}
-										component={LoginScreen}
-									/>
-									<Tab.Screen
-										name="Register"
-										initialParams={submitGlobals}
-										component={RegisterScreen}
-									/>
-								</React.Fragment>
-							)}
-						</React.Fragment>
+						<Tab.Screen
+							name="Loading"
+							initialParams={submitGlobals}
+							component={LoadingScreen}
+						/>
 					)}
-					<Tab.Screen
-						name="About"
-						initialParams={submitGlobals}
-						component={AboutScreen}
-					/>
 				</Tab.Navigator>
 			</NavigationContainer>
 		);
