@@ -136,9 +136,9 @@ export default class App extends Component {
 							token: data.token,
 						},
 					});
+					this.setState({ isConnectionEstablished: true });
 					socket.on("connect", () => {
 						console.log("Socket connected");
-						this.setState({ isConnectionEstablished: true });
 					});
 					socket.on("leak_added", (leaks) => {
 						console.log("leaks added from server", leaks);
