@@ -407,26 +407,16 @@ export default class App extends Component {
 								</React.Fragment>
 							) : (
 								<React.Fragment>
-									{this.state.globals.token ? (
-										<Tab.Screen
-											name="Loading"
-											initialParams={submitGlobals}
-											component={LoadingScreen}
-										/>
-									) : (
-										<React.Fragment>
-											<Tab.Screen
-												name="Login"
-												initialParams={submitGlobals}
-												component={LoginScreen}
-											/>
-											<Tab.Screen
-												name="Register"
-												initialParams={submitGlobals}
-												component={RegisterScreen}
-											/>
-										</React.Fragment>
-									)}
+									<Tab.Screen
+										name="Login"
+										initialParams={submitGlobals}
+										component={LoginScreen}
+									/>
+									<Tab.Screen
+										name="Register"
+										initialParams={submitGlobals}
+										component={RegisterScreen}
+									/>
 								</React.Fragment>
 							)}
 							<Tab.Screen
