@@ -12,6 +12,9 @@ export default styles = StyleSheet.create({
 	title: {
 		fontSize: 25,
 	},
+	subtitle: {
+		fontSize: 20,
+	},
 	text_input: {
 		height: 40,
 		borderColor: "black",
