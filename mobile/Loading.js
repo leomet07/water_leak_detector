@@ -6,6 +6,7 @@ export default class LoadingScreen extends Component {
 		super(props);
 		this.state = {
 			globals: props.route.params.globals,
+			message: props.route.params.message,
 		};
 	}
 
@@ -20,6 +21,11 @@ export default class LoadingScreen extends Component {
 					style={styles.loading_gif}
 					source={require("./assets/loading.gif")}
 				/>
+				{__DEV__ ? (
+					<Text>{this.state.message}</Text>
+				) : (
+					<React.Fragment></React.Fragment>
+				)}
 			</View>
 		);
 	}

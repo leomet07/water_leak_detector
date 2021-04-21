@@ -129,6 +129,7 @@ export default class App extends Component {
 		this.state.globals.emitter.on(
 			"checked_token",
 			(listener = async (data) => {
+				this.setState({ isConnectionEstablished: true });
 				if (data.logged_in) {
 					console.log("after checked token, user IS logged in");
 					socket = connection_client(this.state.globals.BASE_URL, {
@@ -136,7 +137,7 @@ export default class App extends Component {
 							token: data.token,
 						},
 					});
-					this.setState({ isConnectionEstablished: true });
+
 					socket.on("connect", () => {
 						console.log("Socket connected");
 					});
@@ -428,7 +429,10 @@ export default class App extends Component {
 					) : (
 						<Tab.Screen
 							name="Loading"
-							initialParams={submitGlobals}
+							initialParams={{
+								...submitGlobals,
+								message: "isConnectionEstablished",
+							}}
 							component={LoadingScreen}
 						/>
 					)}
