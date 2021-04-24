@@ -21,7 +21,8 @@
 			"favicon": "./assets/favicon.png"
 		},
 		"android": {
-			"package": "com.leomet07.water_leak_detector"
+			"package": "com.leomet07.water_leak_detector",
+			"permissions" : []
 		}
 	}
 }
